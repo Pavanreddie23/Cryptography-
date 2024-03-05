@@ -1,0 +1,32 @@
+#include<stdio.h>
+#include<string.h>
+#include<ctype.h>
+int monoalphabeticcipher(char*plaintext,char*ciphertext)
+{
+	int i;
+	int length=strlen(plaintext);
+	for(i=0;i<length;i++)
+	{
+		if(isalpha(plaintext[i]))
+		{
+			char base=isupper(plaintext[i])?'A':'a';
+		
+		
+		ciphertext[i]=isupper(plaintext[i]-base+3)%26+base;
+	}
+	else
+	{
+		ciphertext[i]=plaintext[i];
+	}
+}
+ciphertext[length]='\0';
+}
+int main()
+{
+	char plaintext[100]="Hello world!";
+	char ciphertext[100];
+	monoalphabeticcipher(plaintext,ciphertext);
+	printf("plaintext:%s\n",plaintext);
+	printf("ciphertext:%s\n",ciphertext);
+	return 0;
+}

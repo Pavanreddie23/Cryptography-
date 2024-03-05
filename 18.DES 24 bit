@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <stdint.h>
+void generateSubkeys(uint64_t initialKey, uint64_t subkeys[16]);
+void desEncrypt(uint64_t plaintext, uint64_t subkeys[16]);
+uint64_t initialKey = 0x123456789ABCDEF;
+int main() {
+    uint64_t plaintext;
+    printf("Enter the plaintext (64-bit in hexadecimal): ");
+    scanf("%llx", &plaintext);
+    uint64_t subkeys[16];
+    generateSubkeys(initialKey, subkeys);
+    desEncrypt(plaintext, subkeys);
+    return 0;
+}
+void generateSubkeys(uint64_t initialKey, uint64_t subkeys[16]) {
+}
+void desEncrypt(uint64_t plaintext, uint64_t subkeys[16]) {
+    uint64_t ciphertext = 0; 
+    printf("Encrypted ciphertext: %llx\n", ciphertext);
+}

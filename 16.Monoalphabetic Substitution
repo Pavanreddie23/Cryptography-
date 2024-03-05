@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#define ALPHABET_SIZE 26
+void countLetterFrequency(char *ciphertext, int frequency[]) {
+    int i;
+    int length = strlen(ciphertext);
+    for (i = 0; i < length; i++) {
+        if (isalpha(ciphertext[i])) {
+            char c = tolower(ciphertext[i]);
+            frequency[c - 'a']++;
+        }
+    }
+}
+void frequencyAttack(char *ciphertext, int topN) {
+    int frequency[ALPHABET_SIZE] = {0};
+    int i, j;
+    int maxIndex;
+    int maxFrequency;
+    countLetterFrequency(ciphertext, frequency);
+    printf("Top %d possible plaintexts:\n", topN);
+    for (i = 0; i < topN; i++) {
+        maxFrequency = 0;
+        for (j = 0; j < ALPHABET_SIZE; j++) {
+            if (frequency[j] > maxFrequency) {
+                maxFrequency = frequency[j];
+                maxIndex = j;
+            }
+        }
+        printf("Plaintext guess %d: ", i + 1);
+        for (j = 0; j < strlen(ciphertext); j++) {
+            if (isalpha(ciphertext[j])) {
+                if (tolower(ciphertext[j]) == 'a' + maxIndex)
+                    printf("e");
+                else
+                    printf(".");
+            } else {
+                printf("%c", ciphertext[j]);
+            }
+        }
+        printf("\n");
+        frequency[maxIndex] = 0;
+    }
+}
+int main() {
+    char ciphertext[] = "Rfqm pmxxm xiz lzf apwwqmc qa exkmcmzm pqz lzf umpwq lzf exkmcmzm pmixfom!";
+    int topN = 5; // Number of possible plaintexts to print
+    frequencyAttack(ciphertext, topN);
+    return 0;
+}

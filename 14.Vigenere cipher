@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#define ALPHABET_SIZE 26
+void generateCipherKey(char *keyword, char *cipherKey) {
+    int i, j;
+    int keywordLength = strlen(keyword);
+    int used[ALPHABET_SIZE] = {0};
+    strcpy(cipherKey, keyword);
+    for (i = 0; i < keywordLength; i++) {
+        if (isalpha(keyword[i])) {
+            used[toupper(keyword[i]) - 'A'] = 1;
+        }
+    }
+    j = keywordLength;
+    for (i = 0; i < ALPHABET_SIZE; i++) {
+        if (!used[i]) {
+            cipherKey[j++] = 'A' + i;
+        }
+    }
+    cipherKey[j] = '\0';
+}
+void encrypt(char *plaintext, char *cipherKey, char *ciphertext) {
+    int i;
+    int length = strlen(plaintext);
+    for (i = 0; i < length; i++) {
+        if (isalpha(plaintext[i])) {
+            if (islower(plaintext[i])) {
+                ciphertext[i] = tolower(cipherKey[plaintext[i] - 'a']);
+            } else {
+                ciphertext[i] = toupper(cipherKey[plaintext[i] - 'A']);
+            }
+        } else {
+            ciphertext[i] = plaintext[i];
+        }
+    }
+    ciphertext[length] = '\0';
+}
+int main() {
+    char keyword[] = "CIPHER";
+    char plaintext[] = "abcdefghijklmnopqrstuvwxyz";
+    char cipherKey[ALPHABET_SIZE + 1];
+    char ciphertext[strlen(plaintext) + 1];
+    generateCipherKey(keyword, cipherKey);
+    encrypt(plaintext, cipherKey, ciphertext);
+    printf("Plaintext: %s\n", plaintext);
+    printf("Ciphertext: %s\n", ciphertext);
+    return 0;
+}

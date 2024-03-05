@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#define ALPHABET_SIZE 26
+void findPosition(char keySquare[5][5], char letter, int *row, int *col) {
+    int i, j;
+    if (letter == 'J')
+        letter = 'I';
+    for (i = 0; i < 5; i++) {
+        for (j = 0; j < 5; j++) {
+            if (keySquare[i][j] == letter) {
+                *row = i;
+                *col = j;
+                return;
+            }
+        }
+    }
+}
+void decryptPair(char keySquare[5][5], char letter1, char letter2, char *decrypted1, char *decrypted2) {
+    int row1, col1, row2, col2;
+    findPosition(keySquare, letter1, &row1, &col1);
+    findPosition(keySquare, letter2, &row2, &col2);
+    if (row1 == row2) {
+        *decrypted1 = (col1 > 0) ? keySquare[row1][col1 - 1] : keySquare[row1][4];
+        *decrypted2 = (col2 > 0) ? keySquare[row2][col2 - 1] : keySquare[row2][4];
+    }
+    else if (col1 == col2) {
+        *decrypted1 = (row1 > 0) ? keySquare[row1 - 1][col1] : keySquare[4][col1];
+        *decrypted2 = (row2 > 0) ? keySquare[row2 - 1][col2] : keySquare[4][col2];
+    }
+    else {
+        *decrypted1 = keySquare[row1][col2];
+        *decrypted2 = keySquare[row2][col1];
+    }
+}
+void decryptPlayfair(char keySquare[5][5], char *message) {
+    int i;
+    int length = strlen(message);
+    for (i = 0; i < length; i += 2) {
+        char decrypted1, decrypted2;
+        decryptPair(keySquare, message[i], message[i + 1], &decrypted1, &decrypted2);
+        message[i] = decrypted1;
+        message[i + 1] = decrypted2;
+    }
+}
+int main() {
+    char keySquare[5][5] = {
+        {'K', 'X', 'J', 'E', 'Y'},
+        {'U', 'R', 'E', 'B', 'Z'},
+        {'W', 'H', 'R', 'Y', 'T'},
+        {'U', 'H', 'E', 'Y', 'F'},
+        {'S', 'K', 'R', 'E', 'H'}
+    };
+    char message[] = "KXJEYUREBEZWEHEWRYTUHEYFSKREHEGOYFIWTTTUOLKSYCAJPOBOTEIZONTXBYBNTGONEYCUZWRGDSONSXBOUYWRHEBAAHYUSEDQ";
+    decryptPlayfair(keySquare, message);
+    printf("Decrypted Message: %s\n", message);
+    return 0;
+}
