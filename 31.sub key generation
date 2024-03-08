@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdint.h>
+#define BLOCK_SIZE_64 8
+#define BLOCK_SIZE_128 16
+uint64_t leftCircularShift64(uint64_t value, int shift) {
+    return (value << shift) | (value >> (64 - shift));
+}
+void leftCircularShift128(uint64_t *value_high, uint64_t *value_low, int shift) {
+    uint64_t high = *value_high;
+    uint64_t low = *value_low;
+    uint64_t carry = (low >> (64 - shift));
+    *value_low = (low << shift) | (high >> (64 - shift));
+    *value_high = (high << shift) | carry;
+}
+void generateSubkeys(const uint64_t *key, uint64_t *subkey1, uint64_t *subkey2, int block_size) {
+    const uint64_t const1_64 = 0x0000000000000001;
+    const uint64_t const2_64 = 0x0000000000000080;
+    const uint64_t const1_128 = 0x00000000000000000000000000000001;
+    const uint64_t const2_128 = 0x00000000000000000000000000000087;
+    uint64_t block_high = 0;
+    uint64_t block_low = 0;
+    *subkey1 = (block_high << 64) | block_low;
+    if (block_size == BLOCK_SIZE_64) {
+        *subkey1 ^= const1_64;
+    } else if (block_size == BLOCK_SIZE_128) {
+        *subkey1 ^= const1_128;
+    }
+    *subkey2 = *subkey1;
+    if (block_size == BLOCK_SIZE_64) {
+        leftCircularShift64(subkey2, 1);
+        if (block_low >> 63) {
+            *subkey2 ^= const2_64;
+        }
+    } else if (block_size == BLOCK_SIZE_128) {
+        leftCircularShift128(&block_high, &block_low, 1);
+        if (block_high >> 127) {
+            *subkey2 ^= const2_128;
+        }
+    }
+}
+int main() {
+    uint64_t key[2] = {0x1122334455667788, 0x99aabbccddeeff00};
+    uint64_t subkey1, subkey2;
+    generateSubkeys(key, &subkey1, &subkey2, BLOCK_SIZE_128);
+    printf("Subkey 1: %016lx\n", subkey1);
+    printf("Subkey 2: %016lx\n", subkey2);
+    return 0;
+}

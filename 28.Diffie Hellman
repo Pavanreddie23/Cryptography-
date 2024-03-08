@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+long long mod_exp(long long base, long long exp, long long mod) {
+    long long result = 1;
+    base = base % mod;
+    while (exp > 0) {
+        if (exp % 2 == 1)
+            result = (result * base) % mod;
+        exp = exp >> 1;
+        base = (base * base) % mod;
+    }
+    return result;
+}
+int main() {
+    long long q = 23; 
+    long long a = 5;  
+    long long x_Alice = 6;
+    long long x_Bob = 15;
+    long long A = mod_exp(a, x_Alice, q);
+    long long B = mod_exp(a, x_Bob, q);
+    printf("Alice sends Bob: %lld\n", A);
+    printf("Bob sends Alice: %lld\n", B);
+    long long secret_Alice = mod_exp(B, x_Alice, q);
+    long long secret_Bob = mod_exp(A, x_Bob, q);
+    if (secret_Alice == secret_Bob) {
+        printf("Shared secret key: %lld\n", secret_Alice);
+        printf("Key agreement successful!\n");
+    } else {
+        printf("Key agreement failed!\n");
+    }
+    return 0;
+}
