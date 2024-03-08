@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+long long mod_exp(long long base, long long exp, long long mod) {
+    long long result = 1;
+    base = base % mod;
+    while (exp > 0) {
+        if (exp % 2 == 1)
+            result = (result * base) % mod;
+        exp = exp >> 1;
+        base = (base * base) % mod;
+    }
+    return result;
+}
+int main() {
+    long long n = 3233;
+    long long e = 17;  
+    long long plaintext[] = {65, 66, 67}; 
+    int num_blocks = sizeof(plaintext) / sizeof(plaintext[0]);
+    printf("Encoded Blocks:\n");
+    for (int i = 0; i < num_blocks; i++) {
+        long long encrypted_block = mod_exp(plaintext[i], e, n);
+        printf("%lld ", encrypted_block);
+    }
+    printf("\n");
+    long long block_with_common_factor = 65;
+    if (n % block_with_common_factor == 0) {
+        printf("Block with a common factor shares a factor with n.\n");
+        printf("This does not directly help in decrypting other blocks without the private key.\n");
+    } else {
+        printf("Block with a common factor does not share a factor with n.\n");
+        printf("This does not directly help in decrypting other blocks without the private key.\n");
+    }
+    return 0;
+}
